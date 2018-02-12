@@ -4,6 +4,8 @@ var morgan = require('morgan');
 var mongoose = require('mongoose');
 var autoIncrement = require('mongoose-auto-increment');
 
+var setupServer = require('./setup');
+
 var urldb = 'mongodb://localhost:27017/products';
 
 var hostname = '0.0.0.0';
@@ -16,10 +18,7 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
   // we're connected!
   console.log("Connected correctly to server");
-  db.dropDatabase((err, result) => {
-    if (err) throw err;
-    console.log('db dropped');
-    
+  setupServer(db, () => {
     var app = express();
 
     app.set('views', path.join(__dirname, 'views'));

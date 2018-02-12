@@ -3,7 +3,7 @@ let Schema = mongoose.Schema;
 let autoIncrement = require('mongoose-auto-increment');
 
 let cartItemSchema = new Schema({
-  _id: {
+  id: {
 		type: Number,
 		required: true
   },

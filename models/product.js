@@ -15,8 +15,12 @@ let productSchema = new Schema({
 		type: Number,
 		required: true
 	},
+	id: {
+		type: Number,
+		required: true
+	},
 });
 
-productSchema.plugin(autoIncrement.plugin, 'product');
+productSchema.plugin(autoIncrement.plugin, { model: 'product', field: 'id' });
 let Product = mongoose.model('product', productSchema);
 module.exports = Product;

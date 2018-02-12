@@ -13,15 +13,6 @@ product.route('/products')
 		if (err) throw err;
 		res.json(products);
 	})
-})
-.post((req,res,next) => {
-	let {name, description, price} = req.body;
-
-	Product.create({ name, description, price }, (err,task) => {
-		if (err) throw err;
-
-		res.json(task);
-	});
-})
+});
 
 module.exports = product;

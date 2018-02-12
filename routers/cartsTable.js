@@ -31,14 +31,13 @@ cart.route('/cart')
 				let index = null;
 				let products = cart.products;
 				let found = products.find((cartItem, i) => {
-					if (cartItem._id === product_id) {
+					if (cartItem.id === product_id) {
 						index = i;
-						return product
+						return product;
 					};
 				});
 
 				if (found) {
-					console.log('case 2');
 					products.forEach((item, i) => {
 						if (i === index) {
 							item.quantity += quantity;
@@ -46,9 +45,7 @@ cart.route('/cart')
 						}
 					});
 
-					console.log(products);
-
-					Cart.findByIdAndUpdate(cart._id, {
+					Cart.findByIdAndUpdate(cart.id, {
 			        $set: {
 								total_sum: (product.price * quantity) + cart.total_sum ,
 								products_count: quantity + cart.products_count,
@@ -56,17 +53,15 @@ cart.route('/cart')
 							}
 				    }).exec((err, cart) => {
 			       	if (err) {
-		           	console.log(err);
 		           	res.status(500).end(err);
 			       	} else {
 		            res.status(200).end();
 							}
 						});
 				} else {
-					console.log('case 3', product);
 					products.push({_id: product_id, quantity, sum: product.price * quantity});
 
-					Cart.findByIdAndUpdate(cart._id, {
+					Cart.findByIdAndUpdate(cart.id, {
 						$set: {
 							total_sum: (product.price * quantity) + cart.total_sum ,
 							products_count: quantity,
@@ -74,17 +69,14 @@ cart.route('/cart')
 						}
 		    	}, (err, cart) => {
 						if (err) throw err;
-
-						res.status(200).end();
 					});
 				}
 			} else {
-				console.log('case 4');
 				Cart.create({
 					total_sum: quantity * product.price,
 					products_count: quantity,
 					products: [{
-						_id: product._id,
+						_id: product.id,
 						quantity,
 						sum: quantity * product.price,
 					}],
@@ -98,9 +90,34 @@ cart.route('/cart')
 	})
 })
 .delete((req,res,next) => {
-	Cart.findByIdAndRemove(req.body.product_id, (err, product) => {
+	Cart.find({}, (err, carts) => {
 		if (err) throw err;
-		res.end();
+
+		if (carts.length) {
+			let cart = carts[0];
+			let products = cart.products;
+			let excludedProduct = null;
+			let products = products.filter((product) => {
+				if (product.id !== req.body.product_id) {
+					return product;
+				}
+				excludedProduct = product;
+			});
+			let { price, quantity } = excludedProduct;
+
+			Cart.findByIdAndUpdate(cart.id, {
+					$set: {
+						total_sum: cart.total_sum - (price * quantity),
+						products_count: cart.products_count -  quantity,
+						products,
+					}
+				}).exec((err, cart) => {
+					if (err) {
+						res.status(500).end(err);
+					} else {
+						res.status(200).end();
+					}
+				});
 	})
 })
 
