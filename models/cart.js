@@ -3,12 +3,9 @@ let Schema = mongoose.Schema;
 let autoIncrement = require('mongoose-auto-increment');
 
 let cartItemSchema = require('./cartItem');
+let transform = require('../utils').transform;
 
 let cartSchema = new Schema({
-  id: {
-		type: Number,
-		required: true
-	},
   total_sum: {
 		type: Number,
 		required: true
@@ -20,6 +17,7 @@ let cartSchema = new Schema({
   products: [cartItemSchema]
 });
 
-cartSchema.plugin(autoIncrement.plugin, { model: 'cart', field: 'id' });
+transform(cartSchema);
+cartSchema.plugin(autoIncrement.plugin, { model: 'cart'});
 let Cart = mongoose.model('cart', cartSchema);
 module.exports = Cart;

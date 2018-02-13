@@ -2,6 +2,8 @@ let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 let autoIncrement = require('mongoose-auto-increment');
 
+let transform = require('../utils').transform;
+
 let productSchema = new Schema({
 	name: {
 		type: String,
@@ -15,12 +17,10 @@ let productSchema = new Schema({
 		type: Number,
 		required: true
 	},
-	id: {
-		type: Number,
-		required: true
-	},
 });
 
-productSchema.plugin(autoIncrement.plugin, { model: 'product', field: 'id' });
+transform(productSchema);
+
+productSchema.plugin(autoIncrement.plugin, { model: 'product'});
 let Product = mongoose.model('product', productSchema);
 module.exports = Product;

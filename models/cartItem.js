@@ -2,8 +2,10 @@ let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 let autoIncrement = require('mongoose-auto-increment');
 
+let transform = require('../utils').transform;
+
 let cartItemSchema = new Schema({
-  id: {
+  _id: {
 		type: Number,
 		required: true
   },
@@ -16,5 +18,7 @@ let cartItemSchema = new Schema({
 		required: true
   },
 });
+
+transform(cartItemSchema);
 
 module.exports = cartItemSchema;

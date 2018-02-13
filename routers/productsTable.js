@@ -11,7 +11,10 @@ product.route('/products')
 .get((req,res,next) =>{
 	Product.find({}, (err, products) => {
 		if (err) throw err;
-		res.json(products);
+		products.forEach((product) => {
+			product.toJSON();
+		});
+		res.send({data: products});
 	})
 });
 
